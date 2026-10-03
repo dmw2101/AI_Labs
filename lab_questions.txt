@@ -1,0 +1,88 @@
+BN lab: 
+q1) its useful for generating text because we can assume that the next word (or token) is based on the tokens generated before
+so this is a way of modelling tokens as a probability of what should appear next based on what has appeared in the past
+
+q2)the independence assumption is that the next token depends only on the previous token and nothing else
+p(Xi | X1X2.....X(i-1)) = p(Xi | X(i-1)) no token besides for the one immediately before matters
+
+q3) 
+P(next word | the): 12 observed transitions
+  P(cat | the) =1/4
+  P(dog | the) =  1/4
+  P(mat | the)  = 1/6
+  P(rug | the) = 1/6
+  P(park | the) = 1/6
+
+P(next word | cat): 3 observed transitions
+  P(sat | cat) = 2/3
+  P(ran | cat) = 1/3
+
+P(next word | dog): 3 observed transitions
+  P(sat | dog) = 2/3
+  P(ran | dog) = 1/3
+
+P(next word | sat): 4 observed transitions
+  P(on | sat) =  1
+
+P(next word | ran): 2 observed transitions
+  P(to | ran) =  1
+
+Zero-probability transitions: for these five current words, every other next
+word in the dataset vocabulary {the, cat, dog, sat, on, mat, rug, ran, to,
+
+q4) Transition counts are stored in the model's self.transition_counts
+dictionary. Each previous token is a key, and its value is a Counter that
+stores counts for each following token. For example, the entry for "the"
+contains counts for "cat", "dog", "mat", "rug", and "park".
+
+q5) P(next token | previous token) is computed in __init__ when the model
+builds self.probabilities. For each pair, it divides that pair's count by the
+total count of all transitions starting with the previous token:
+
+P(next | previous) = count(previous, next) / total_outgoing_count(previous)
+
+q6) The program has both behaviors, in different methods. predict_next()
+chooses the most probable next token (breaking ties alphabetically). In
+generate_sentence(), random.choices() samples a next token using the learned
+probabilities as weights. Choosing the most probable token always returns the
+same choice for a given context; sampling can choose less probable tokens too,
+so generated sentences can vary like some sort of temperature measure or top p in llms.
+
+q7) If a token has no observed outgoing transitions, distribution() raises a
+ValueError saying there are no outgoing transitions for that token. The model
+does not smooth the probabilities or back off to another context. During
+generation, <END> stops generation before the model needs a distribution for
+it.
+
+q8) A total of 0.87 means the conditional probabilities for that current word
+do not form a complete probability distribution: 0.13 of the probability mass
+is missing. The total should be approximately 1. This suggests checking the
+transition counts, the denominator used to normalize them, and whether every
+observed next-token transition is included. Small floating-point differences
+are normal, but 0.87 is too far from 1 to be rounding error.
+
+q9) Not always. The model chooses next words from frequencies in its small
+training dataset, using only the immediately preceding word. It does not use
+the full sentence meaning or broader linguistic knowledge also in this, the next word is dependent only on the previous 
+word so sentences wont be necessarily coherent because normally our sentences have longer term 
+dependencies
+
+For this dataset, the five contexts give:
+  the -> cat (0.25) or dog (0.25), a tie; the program returns cat because its
+         tie-breaking rule chooses alphabetically
+  cat -> sat (2/3)
+  dog -> sat (2/3)
+  sat -> on (1)
+  ran -> to (1)
+
+This illustrates the difference between a probability model, which reports
+patterns and frequencies learned from its training data, and human linguistic
+expectations, which can use meaning, context, and knowledge beyond that data.
+
+
+q10) the one with sampling will have more variation because there is some inherent randomness since it is not 
+deterministic 
+
+q11) now in the graph structure, a node in the graph will have 2 parents as a node's probability is dependent on 
+the previous 2 tokens so 2 things influence it instead of just one
+

@@ -1,0 +1,16 @@
+Mode A: Greedy (always choose the most probable next token)
+This dataset's greedy path loops before reaching <END>:
+<START> -> the -> cat -> sat -> on -> the -> ...
+The five deterministic attempts therefore have the same result:
+1. No complete sentence: Greedy decoding entered a cycle at 'the' before generating <END>.
+2. No complete sentence: Greedy decoding entered a cycle at 'the' before generating <END>.
+3. No complete sentence: Greedy decoding entered a cycle at 'the' before generating <END>.
+4. No complete sentence: Greedy decoding entered a cycle at 'the' before generating <END>.
+5. No complete sentence: Greedy decoding entered a cycle at 'the' before generating <END>.
+
+Mode B: Sampling (five complete sampled sentences)
+1. the rug
+2. the cat ran to the dog sat on the dog sat on the cat sat on the rug
+3. the dog sat on the mat
+4. the rug
+5. the park
